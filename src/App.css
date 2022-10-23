@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+}
+
+.container > form {
+  width: 50%;
+}
+
+.container > form ~ form {
+  margin-left: 20px;
+  
+}

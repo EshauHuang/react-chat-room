@@ -1,0 +1,33 @@
+.chat-message-container {
+  width: 100%;
+  border: 1px solid black;
+  height: 45vh;
+  overflow: auto;
+}
+
+.chat-message ~ .chat-message {
+  margin-top: 5px;
+}
+
+.input-container {
+  display: flex;
+  margin-top: 10px;
+}
+
+.input-container input {
+  flex-grow: 1;
+}
+
+.system-message {
+  background-color: orange;
+  color: white;
+  padding: 0 5px;
+}
+
+.chat-message {
+  display: flex;
+}
+
+.message {
+  margin-left: 10px;
+}
