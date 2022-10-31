@@ -1,16 +1,10 @@
 import { useState } from "react";
-import Chatroom from "./components/Chatroom";
+import Chatroom from "./components/Chatroom/Chatroom";
+import Rooms from "./components/Rooms/Rooms";
 
 import "./App.css";
 
-const users = [
-  {
-    username: "Sans",
-  },
-  {
-    username: "Bob",
-  },
-];
+const users = ["Sans", "Bob"];
 
 function App() {
   return (
@@ -19,6 +13,7 @@ function App() {
         <Chatroom key={`${index}`} user={user} />
       ))}
     </div>
+    // <Rooms />
   );
 }
 
