@@ -2,7 +2,18 @@
   width: 100%;
   border: 1px solid black;
   height: 45vh;
-  overflow: auto;
+  overflow-y: scroll;
+}
+
+.chat-message-container::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+.chat-message-container::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 }
 
 .chat-message ~ .chat-message {

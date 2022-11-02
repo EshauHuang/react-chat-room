@@ -13,7 +13,6 @@ function App() {
         <Chatroom key={`${index}`} user={user} />
       ))}
     </div>
-    // <Rooms />
   );
 }
 

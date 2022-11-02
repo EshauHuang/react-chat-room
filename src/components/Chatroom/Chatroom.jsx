@@ -10,6 +10,18 @@ const Chatroom = ({ user }) => {
   const [currentUser, setCurrentUser] = useState(() => user);
   const inputRef = useRef(null);
   const roomRef = useRef(null);
+  const chatMessagesRef = useRef(null);
+
+  useEffect(() => {
+    if (!chatMessagesRef || !comments.length) return;
+
+    const chatMEssageEl = chatMessagesRef.current;
+
+    chatMEssageEl.lastChild.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [comments, chatMessagesRef]);
 
   useEffect(() => {
     const socket = io("http://localhost:3000", { autoConnect: false });
@@ -22,6 +34,19 @@ const Chatroom = ({ user }) => {
       setIsConnected(false);
     });
 
+    setSocket(socket);
+
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("new-user");
+      socket.off("user-left");
+      socket.off("chat-message");
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!socket) return;
     socket.on("new-user", (user) => {
       setComments((prev) => [
         ...prev,
@@ -51,17 +76,12 @@ const Chatroom = ({ user }) => {
         },
       ]);
     });
-
-    setSocket(socket);
-
     return () => {
-      socket.off("connect");
-      socket.off("disconnect");
       socket.off("new-user");
       socket.off("user-left");
       socket.off("chat-message");
     };
-  }, []);
+  }, [socket]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -95,9 +115,13 @@ const Chatroom = ({ user }) => {
   };
 
   const handleDisconnectSocket = () => {
-    if (!isConnected) return
+    if (!isConnected) return;
     socket.disconnect();
   };
+
+  const handleStreamClose = () => {
+    socket.emit("stream-close");
+  }
 
   return (
     <>
@@ -116,7 +140,7 @@ const Chatroom = ({ user }) => {
           <option value="room2">聊天室2</option>
           <option value="room3">聊天室3</option>
         </select>
-        <div className="chat-message-container">
+        <div className="chat-message-container" ref={chatMessagesRef}>
           {comments.map((comment, index) =>
             comment.type === "system" ? (
               <div key={`${index}`} className="system-message">
@@ -135,6 +159,7 @@ const Chatroom = ({ user }) => {
           <button type="submit">送出</button>
         </div>
       </form>
+      <button onClick={handleStreamClose}>直播結束</button>
     </>
   );
 };
