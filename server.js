@@ -88,26 +88,26 @@ const io = new Server(server, {
 
 app.io = io;
 
-app.get("/rtmp/on_publish", (req, res) => {
-  console.log("GET/on_publish");
-  res.send("success");
-});
-
-app.get("/rtmp/on_publish_done", (req, res) => {
-  console.log("GET/on_publish_done");
-  res.send("success");
-});
-
 app.post("/rtmp/on_publish", (req, res) => {
-  console.log(req.app.io, req.body);
+  console.log(req, req.body);
   console.log("POST/on_publish");
-  res.send("success");
+  res.status(204).send("Success!");
 });
 
-app.post("/rtmp/on_publish_done", (req, res) => {
-  console.log(req);
+app.post("/rtmp/on_publish_done", async (req, res) => {
   console.log("POST/on_publish_done");
-  res.send("success");
+  try {
+    const json = JSON.stringify({
+      room1: {
+        comments: rooms["room1"].comments,
+      },
+    });
+    await fs.promises.writeFile("comments.json", json);
+    req.app.io.to("room1").emit("stream-connected")
+    res.send("success");
+  } catch (error) {
+    res.send("failed");
+  }
 });
 
 io.on("connection", (socket) => {
@@ -154,14 +154,7 @@ io.on("connection", (socket) => {
   });
 
   // 假設直播結束
-  socket.on("stream-close", async () => {
-    const json = JSON.stringify({
-      room1: {
-        comments: rooms["room1"].comments,
-      },
-    });
-    await fs.promises.writeFile("comments.json", json);
-  });
+  socket.on("stream-close", async () => {});
 
   function currentRoomToDo(func) {
     for (const room of socket.rooms) {

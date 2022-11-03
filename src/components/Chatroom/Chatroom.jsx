@@ -39,14 +39,12 @@ const Chatroom = ({ user }) => {
     return () => {
       socket.off("connect");
       socket.off("disconnect");
-      socket.off("new-user");
-      socket.off("user-left");
-      socket.off("chat-message");
     };
   }, []);
 
   useEffect(() => {
     if (!socket) return;
+
     socket.on("new-user", (user) => {
       setComments((prev) => [
         ...prev,
@@ -76,6 +74,10 @@ const Chatroom = ({ user }) => {
         },
       ]);
     });
+
+    socket.on("stream-connected", () => {
+      console.log("stream connected")
+    })
     return () => {
       socket.off("new-user");
       socket.off("user-left");
