@@ -3,7 +3,7 @@ import io from "socket.io-client";
 
 import "./Chatroom.css";
 
-const Chatroom = ({ user }) => {
+const Chatroom = ({ user, setIsStreamOn }) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [comments, setComments] = useState([]);
@@ -76,8 +76,9 @@ const Chatroom = ({ user }) => {
     });
 
     socket.on("stream-connected", () => {
-      console.log("stream connected")
-    })
+      console.log("stream connected");
+      setIsStreamOn(true)
+    });
     return () => {
       socket.off("new-user");
       socket.off("user-left");
@@ -123,7 +124,7 @@ const Chatroom = ({ user }) => {
 
   const handleStreamClose = () => {
     socket.emit("stream-close");
-  }
+  };
 
   return (
     <>

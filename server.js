@@ -4,6 +4,12 @@ import { Server } from "socket.io";
 import cors from "cors";
 import * as fs from "fs";
 
+let isStreamOn = false;
+
+const video = {
+
+}
+
 class Comments {
   constructor() {
     this.length = 0;
@@ -86,16 +92,21 @@ const io = new Server(server, {
   },
 });
 
-app.io = io;
+// app.io = io;
 
 app.post("/rtmp/on_publish", (req, res) => {
-  console.log(req, req.body);
+
+  //get 
+  isStreamOn = true;
   console.log("POST/on_publish");
+  io.to("room1").emit("stream-connected");
   res.status(204).send("Success!");
 });
 
 app.post("/rtmp/on_publish_done", async (req, res) => {
+  isStreamOn = false;
   console.log("POST/on_publish_done");
+
   try {
     const json = JSON.stringify({
       room1: {
@@ -103,11 +114,14 @@ app.post("/rtmp/on_publish_done", async (req, res) => {
       },
     });
     await fs.promises.writeFile("comments.json", json);
-    req.app.io.to("room1").emit("stream-connected")
     res.send("success");
   } catch (error) {
     res.send("failed");
   }
+});
+
+app.get("/check-stream", (req, res) => {
+  res.send(isStreamOn);
 });
 
 io.on("connection", (socket) => {
